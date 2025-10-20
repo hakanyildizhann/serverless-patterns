@@ -17,7 +17,7 @@ export class SNSSQSLambdaStack extends cdk.Stack {
 		super(scope, id, props);
 
 		// SNS Topic
-		const snsTopic = new Topic(this, 'SNSTopic', {
+		const snsTopic = new Topic(this, 'hakanSNSTopic', {
 			displayName: 'Lambda subscription topic',
 		});
 
@@ -25,7 +25,7 @@ export class SNSSQSLambdaStack extends cdk.Stack {
 		const sqsQueue = new Queue(this, 'SQSQueue');
 
 		/* Lambda function that sends messages */
-		const sender = new Function(this, 'SenderFunction', {
+		const sender = new Function(this, 'hakanSenderFunction', {
 			code: Code.fromAsset(path.join(__dirname, '../functions')),
 			runtime: Runtime.NODEJS_16_X,
 			handler: 'sender.handler',
@@ -41,7 +41,7 @@ export class SNSSQSLambdaStack extends cdk.Stack {
 		snsTopic.addSubscription(new SqsSubscription(sqsQueue));
 
 		/* Lambda function that consumes messages from the queue */
-		const consumer = new Function(this, 'ConsumerFunction', {
+		const consumer = new Function(this, 'hakanConsumerFunction', {
 			code: Code.fromAsset(path.join(__dirname, '../functions')),
 			runtime: Runtime.NODEJS_16_X,
 			handler: 'consumer.handler',
@@ -59,7 +59,7 @@ export class SNSSQSLambdaStack extends cdk.Stack {
 
 		sqsQueue.grantConsumeMessages(consumer);
 
-		new CfnOutput(this, 'SenderFunctionName', {
+		new CfnOutput(this, 'hakanSenderFunctionName', {
 			value: sender.functionName,
 		});
 
