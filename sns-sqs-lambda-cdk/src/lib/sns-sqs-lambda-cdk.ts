@@ -22,13 +22,15 @@ export class SNSSQSLambdaStack extends cdk.Stack {
 		});
 
 		// SQS Queue
-		const sqsQueue = new Queue(this, 'SQSQueue');
+		const sqsQueue = new Queue(this, 'hakanSQSQueue');
 
 		/* Lambda function that sends messages */
 		const sender = new Function(this, 'hakanSenderFunction', {
 			code: Code.fromAsset(path.join(__dirname, '../functions')),
 			runtime: Runtime.NODEJS_16_X,
 			handler: 'sender.handler',
+			memorySize: 256,
+			timeout: cdk.Duration.seconds(10),
 			environment: {
 				TOPIC_ARN: snsTopic.topicArn,
 			},
